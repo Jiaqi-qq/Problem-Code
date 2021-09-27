@@ -8,9 +8,9 @@ int data;
 
 void productor() {
     while (true) {
-        this_thread::sleep_for(chrono::milliseconds(100));
+        this_thread::sleep_for(chrono::milliseconds(700));
         unique_lock<mutex> lk(mtx);
-        while (buffer.size() > BUFFER_MAX_NUM) {
+        while (buffer.size() >= BUFFER_MAX_NUM) {
             cv.wait(lk);
         }
         cout << "productor data:" << data << " buffer size:" << buffer.size()
@@ -22,7 +22,7 @@ void productor() {
 
 void consumer() {
     while (true) {
-        this_thread::sleep_for(chrono::milliseconds(500));
+        this_thread::sleep_for(chrono::milliseconds(300));
         unique_lock<mutex> lk(mtx);
         while (buffer.empty()) {
             cv.wait(lk);
