@@ -1,10 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
+/**
+ * 给定一个int数组(长度>2)，以及1个整数，在该数组中找到2个数，使得这两数之和等于/最接近给定的这个数
+ * 注意：
+ *      数组中不会有重复的数字。
+ *      要求返回索引，而不是数组中的值。
+ *      返回全部组合，并保证索引递增。
+ * 例子：
+ *      输入：[9,0,2,4,5,3], sum=11
+ *      返回：[[0, 1], [0, 2], [4, 5]]
+ */
 class Solution {
    public:
     /**
-     * 在数组中找到 两数之和最接近 sum 的全部组合。升序返回
-     *
      * 返回值是1个二维数组，表示多个可能的组合；要求返回的是索引
      * @param array int整型vector 给定的数组（没有重复数字，长度至少等于2）
      * @param sum int整型 两数之和要等于这个sum
@@ -14,28 +22,23 @@ class Solution {
         // write code here
         vector<vector<int>> ans;
         if (array.size() < 2) return ans;
-        vector<int> index(array.size());
+        vector<int> index(array.size());  // 使用中间index进行排序，不改变原数组，便于最后找到初始索引
         for (int i = 0; i < index.size(); ++i) index[i] = i;
         int dif = INT_MAX;
         sort(index.begin(), index.end(), [&](int x, int y) { return array[x] < array[y]; });
 
         for (int i = 0; i < index.size(); ++i) {
             auto p = lower_bound(index.begin(), index.end(), sum - array[index[i]], [&](int tmp, int x) { return array[tmp] < array[x]; });
-            printf("\tp:%d\n", p - index.begin());
             if (p != index.end() && array[*p] != array[index[i]]) {
-                // printf("1 : %d + %d, dif:%d\n", array[index[i]], array[*p], abs(sum - array[index[i]] - *p));
                 dif = min(dif, abs(sum - array[index[i]] - array[*p]));
                 if (p + 1 != index.end() && array[*(p + 1)] != array[index[i]]) {
-                    // printf("3 : %d + %d, dif:%d\n", array[index[i]], array[*(p - 1)], abs(sum - array[index[i]] - *(p + 1)));
                     dif = min(dif, abs(sum - array[index[i]] - array[*(p + 1)]));
                 }
             }
             if (p != index.begin() && array[*(p - 1)] != array[index[i]]) {
-                // printf("2 : %d + %d, dif:%d\n", array[index[i]], array[*(p - 1)], abs(sum - array[index[i]] - *(p - 1)));
                 dif = min(dif, abs(sum - array[index[i]] - array[*(p - 1)]));
             }
         }
-        printf("dif:%d\n", dif);
         map<int, int> mp;
         for (int i = 0; i < index.size(); ++i) {
             if (dif == 0) {
